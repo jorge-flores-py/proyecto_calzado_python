@@ -50,14 +50,11 @@ Dentro del archivo __main.py__ deberá implementar las siguientes funciones que 
 ### Funcion "read_db"
 Encabezado de la función:
 ```python
-def read_db(path):
+def read_db():
 ```
 
 Entrada (argumentos):
-- Esta función recibe por parámetro el path donde se encuentra la base de datos. Este path es el que se utiliza a la hora de crear el engine de SQLAlchemy:
-```python
-engine = sqlalchemy.create_engine(path)
-```
+- Esta función no recibe entradas.
 
 Objetivo:
 - La función deberá leer la base de datos y recorrer todas la filas. Deberá ir almacenando los datos de las siguientes columnas en array numpy separados:
