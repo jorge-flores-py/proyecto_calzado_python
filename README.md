@@ -39,6 +39,7 @@ Deberá consumir la base de datos SQL "ventas_calzados.db". Utilizar SQLAlchemy 
 - product_id --> número (Integer) (id del producto vendido)
 - country --> texto (String) (país en donde se efectuó la venta)
 - gender --> texto (String) (si el calzado era "Female", "Male" o "Unix")
+- size --> texto (String) (tamaño del calzado)
 - price --> texto (String) (precio, viene con el símbolo $ adelante)
 
 __IMPORTANTE__: Cuando lea la tabla de la base de datos fila por fila, deberá descartar aquellas filas que posean una de sus columnas vacias.
