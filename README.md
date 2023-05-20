@@ -10,13 +10,9 @@ Este proyecto se acerca al tipo de trabajo y de desafios que tendrán en el curs
 
 Para este proyecto ya cuenta con una base de datos SQL para consumir y hacer análisis de datos.
 
-__NOTA__: Recomendamos haber realizado todos los ejercicios de pŕactica para poder realizar este proyecto, principalmente los de:
-- numpy, matplotlib
-- SQLAlchemy ORM
-
 
 ## Objetivo
-El objetivo es analizar los datos de ventas de calzados deportivos, obtener métricas por pais, génerico y tamaño del calzado. Deberá:
+El objetivo es analizar los datos de ventas de calzados deportivos, obtener métricas por pais, génerico y talle del calzado. Deberá:
 - Levantar el dataset en numpy, filtrando información inválida.
 - Crear una serie de funciones que se detallarán más adelante, la cual cada una tiene un objetivo de análisis.
 
@@ -27,21 +23,20 @@ El objetivo es analizar los datos de ventas de calzados deportivos, obtener mét
 
 ## Como comenzar
 - Deberá crear un archivo "main.py" en el cual colocará todo el código necesario para realizar el proyecto.
-- Dentro de ese archivo deberá importar las siguientes librerías que crea necesaria para la realización del proyecto.
+- Dentro de ese archivo deberá importar las librerías que crea necesarias para la realización del proyecto.
 - Luego deberá crear el bloque principal `if __name__ == "__main__":`. Dentro del bloque principal invocará sus funciones y desarrollará el proyecto.
 - Entre el lugar donde usted importo las librerías y generó el bloque pincipal, ahí irá creando sus funciones que se detallan.
 
 
 ## Base de datos
-Deberá consumir la base de datos SQL "ventas_calzados.db". Utilizar SQLAlchemy para crear una clase que responda a la tabla "venta". Dicha tabla "venta" debe contener las siguientes columnas:
+Deberá consumir la base de datos SQL "ventas_calzados.db". Utilizar SQLAlchemy para crear una clase que responda a la tabla "ventas". Dicha tabla "ventas" debe contener las siguientes columnas:
 - id --> número (Integer) (autoincremental, primary_key)
-- date --> texto (String) (fecha en la cual se efectuó la venta)
-- product_id --> número (Integer) (id del producto vendido)
-- country --> texto (String) (país en donde se efectuó la venta)
-- gender --> texto (String) (si el calzado era "Female", "Male" o "Unix")
-- price --> texto (String) (precio, viene con el símbolo $ adelante)
-
-__IMPORTANTE__: Cuando lea la tabla de la base de datos fila por fila, deberá descartar aquellas filas que posean una de sus columnas vacias.
+- fecha --> texto (String) (fecha en la cual se efectuó la venta)
+- producto_id --> número (Integer) (id del producto vendido)
+- pais --> texto (String) (país en donde se efectuó la venta)
+- genero --> texto (String) (si el calzado era "Female", "Male" o "Unix")
+- talle --> texto (String) (talle del calzado)
+- precio --> texto (String) (precio, viene con el símbolo $ adelante)
 
 
 ## Funciones del sistema
@@ -50,34 +45,34 @@ Dentro del archivo __main.py__ deberá implementar las siguientes funciones que 
 ### Funcion "read_db"
 Encabezado de la función:
 ```python
-def read_db(path):
+def read_db():
 ```
 
 Entrada (argumentos):
-- Esta función recibe por parámetro el path donde se encuentra la base de datos. Este path es el que se utiliza a la hora de crear el engine de SQLAlchemy:
-```python
-engine = sqlalchemy.create_engine(path)
-```
+- Esta función no recibe parámetros.
 
 Objetivo:
-- La función deberá leer la base de datos y recorrer todas la filas. Deberá ir almacenando los datos de las siguientes columnas en array numpy separados:
-    - country
-    - gender
-    - size
-    - price
-- No se debe utilizar la fila de datos si alguna de todas las columnas de la tabla está vacia.
-- El array de numpy price debe contener los precios en tipo de dato "float". Para ello, primero usted debe quitar del precio el símbolo "$" para poder transformarlo a float y almacenarlo en el array numpy price.
+- La función deberá leer la base de datos y recorrer todas la filas. Deberá ir almacenando los datos de las siguientes columnas en 4 array numpy separados:
+    - paises
+    - generos
+    - talles
+    - precios
+- Tip: Crear 4 listas para almacenar los datos solicitados, luego cada una de esas listas las puede transformar en arrays numpy con:
+```python
+mi_array = np.array(mi_lista)
+```
+- El array de numpy "precios" debe contener los precios en tipo de dato "float". Para ello, primero usted debe quitar del precio el símbolo "$" para poder transformarlo a float.
 
 Salida (return):
 - La función deberá retornar todos los array numpy creados, en el siguiente orden:
 ```python
-return country, gender, size, price
+return paises, generos, talles, precios
 ```
 
-### Funcion "paises_unicos"
+### Funcion "obtener_paises_unicos"
 Encabezado de la función:
 ```python
-def paises_unicos(country):
+def obtener_paises_unicos(paises):
 ```
 
 Entrada (argumentos):
@@ -91,88 +86,88 @@ Salida (return):
 - La función deberá retornar lista/array de paises únicos.
 
 Ejemplo:
-- contry --> ["Canada", "Canada", "Germany", "Argentina", "USA", "Canada"]
+- paises --> ["Canada", "Canada", "Germany", "Argentina", "USA", "Canada"]
 - salida --> ["Canada", "Germany", "Argentina", "USA"]
 
-### Funcion "ventas_pais"
+### Funcion "obtener_ventas_por_pais"
 Encabezado de la función:
 ```python
-def ventas_pais(countries, country, price):
+def obtener_ventas_por_pais(paises_objetivo, paises, precios):
 ```
 
 Ejemplo (a modo de referencia):
 - Esta función recibe por parámetro:
-    - countries --> Lista de nombres de paises que se desea analizar
-    - country --> array numpy de paises de ventas del dataset
-    - price --> array numpy de precios de ventas del dataset
+    - paises_objetivo --> Lista de nombres de paises que se desea analizar
+    - paises --> array numpy de paises de ventas del dataset
+    - precios --> array numpy de precios de ventas del dataset
 
 Objetivo:
-- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en countries).
-- En cada clave deberá almacenar cuanto dinero total recaudó cada país a analizar en sus ventas (recorriendo el array numpy de country y price).
-- Para poder obtener las ventas / price que realizó cada país del array numpy "price", puede utilizar el concepto de máscaras (mask) para otener todos los elementos de un array vinculados a un país (ver archivo numpy_mask.py como referencia).
+- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en paises_objetivo).
+- En cada clave deberá almacenar cuanto dinero total recaudó cada país a analizar en sus ventas (recorriendo el array numpy de paises y precios).
+- Para poder obtener las ventas que realizó cada país del array numpy "precios", puede utilizar el concepto de máscaras (mask) para otener todos los elementos de un array vinculados a un país (ver archivo numpy_mask.py como referencia).
 
 Salida (return):
 - La función deberá retornar el diccionario con el monto/dinero que cada país acumuló en sus ventas.
 
 Ejemplo (a modo de referencia):
-- countries --> ["Canada", "Germany"]
-- country --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
-- price --> [250, 250, 100, 120, 50]
+- paises_objetivo --> ["Canada", "Germany"]
+- paises --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
+- precios --> [250, 250, 100, 120, 50]
 - salida --> {"Canada": 600, "Germany": 120}
 
 
-### Funcion "calzado_pais"
+### Funcion "obtener_calzado_mas_vendido_por_pais"
 Encabezado de la función:
 ```python
-def calzado_pais(countries, contry, size):
+def obtener_calzado_mas_vendido_por_pais(paises_objetivo, paises, talles):
 ```
 Entrada (argumentos):
 - Esta función recibe por parámetro:
-    - countries --> Lista de nombres de paises que se desea analizar
-    - country --> array numpy de paises de ventas del dataset
-    - size --> array numpy de tamaño de calzados vendidos
+    - paises_objetivo --> Lista de nombres de paises que se desea analizar
+    - paises --> array numpy de paises de ventas del dataset
+    - talles --> array numpy de talles de calzados vendidos
 
 Objetivo:
-- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en countries).
-- En cada clave deberá almacenar cual fue el tamaño de calzado que más vendió ese país (recorriendo el array numpy de country y size).
-- Para poder obtener que cantidad se vendió de cada calzado puede investigar la función np.unique con el parámetro return_counts=True.
+- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en paises_objetivo).
+- En cada clave deberá almacenar cual fue el talle de calzado que más se vendió de ese país (recorriendo el array numpy de paises y talles).
+- Para poder obtener que cantidad se vendió de cada talle de calzado puede investigar la función np.unique con el parámetro return_counts=True.
 
 Salida (return):
-- La función deberá retornar el diccionario con el tamaño del calzado más vendido en cada país en sus ventas.
+- La función deberá retornar el diccionario con el talle del calzado más vendido en cada país en sus ventas.
 
 Ejemplo (a modo de referencia):
-- countries --> ["Canada", "Germany"]
-- country --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
-- size --> ["10.5", "9", "10.5", "11", "9"]
+- paises_objetivo --> ["Canada", "Germany"]
+- paises --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
+- talles --> ["10.5", "9", "10.5", "11", "9"]
 - salida --> {"Canada": "10.5", "Germany": "11"}
 
 
-### Funcion "ventas_genero_pais"
+### Funcion "obtener_ventas_por_genero_pais"
 Encabezado de la función:
 ```python
-def ventas_genero_pais(countries, gender_target, country, gender):
+def obtener_ventas_por_genero_pais(paises_objetivo, genero_objetivo, paises, generos):
 ```
 
 Entrada (argumentos):
 - Esta función recibe por parámetro:
-    - countries --> Lista de nombres de paises que se desea analizar
-    - gender_target --> El género de calzado que se desea analizar
-    - country --> array numpy de paises de ventas del dataset
-    - gender --> array numpy de genero de calzado en cada venta del dataset
+    - paises_objetivo --> Lista de nombres de paises que se desea analizar
+    - genero_objetivo --> El género de calzado que se desea analizar
+    - paises --> array numpy de paises de ventas del dataset
+    - generos --> array numpy de genero de calzado en cada venta del dataset
 
 Objetivo:
-- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en countries).
-- En cada clave deberá almacenar cuantos calzados del género a analizar (gender_target) se vendió en cada país (recorriendo el array numpy de country y gender).
+- Deberá armar un diccionario cuyas claves sean los nombres de los paises solicitados a analizar (detallados en paises_objetivo).
+- En cada clave deberá almacenar cuantos calzados del género a analizar (genero_objetivo) se vendió en cada país (recorriendo el array numpy de paises y generos).
 - Para poder filtrar los calzados por país y luego por género también puede utilizar mascaras de numpy (una máscara para cada criterio de búsqueda/filtrado).
 
 Salida (return):
 - La función deberá retornar el diccionario con la cantidad de calzados vendidos en el género solicitado por cada país en sus ventas.
 
 Ejemplo (a modo de referencia):
-- countries --> ["Canada", "Germany"]
-- gender_target --> "Female"
-- country --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
-- gender --> ["Female", "Unix", "Female", "Male", "Male"]
+- paises_objetivo --> ["Canada", "Germany"]
+- genero_objetivo --> "Female"
+- paises --> ["Canada", "Canada", "Canada", "Germany", "Argentina"]
+- generos --> ["Female", "Unix", "Female", "Male", "Male"]
 - salida --> {"Canada": 2, "Germany": 0}
 
 
@@ -183,5 +178,5 @@ if __name__ == "__main__":
     print("\n¡Aquí utilizo mis funciones!\n")
 ```
 
-## Puntos extra (bonus track)
+## Milla extra
 Crear otro archivo llamado "graficos.py" como copia del archivo "main.py". En en archivo graficos utilice plots de matplotlib o seaborn para ilustrar el output de cada función.
